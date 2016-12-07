@@ -33,13 +33,13 @@ public class Elevator {
 		else
 			floor = personQueue.peek().getFloor();
 
-		if(floor - currentFloor > 1)
-			moveTime = 16.0 + 5.0 * ((floor-currentFloor) - 2);
+		if(Math.abs(floor - currentFloor) > 1.0)
+			moveTime = 16.0 + 5.0 * ((double)Math.abs(floor-currentFloor) - 2.0);
 		else
 			moveTime = 8.0;
 
-		currentFloor = floor;
 		floorsTraveled += Math.abs(floor - currentFloor);
+		currentFloor = floor;
 		numStops++;
 
 		return moveTime;
@@ -49,8 +49,14 @@ public class Elevator {
 	public String toString() {
 		return "Elevator [currentFloor=" + currentFloor + ", numStops="
 				+ numStops + ", floorsTraveled=" + floorsTraveled
-				+ ", personQueue=" + personQueue + ", waitTimes=" + waitTimes
+				+ ", personQueue=" + personQueue + ", waitTimes=" + totalWait()
 				+ "]";
+	}
+	
+	public double totalWait(){
+		double sum = 0.0;
+		for (double x : waitTimes) sum += x;
+		return sum;
 	}
 
 	public int getStops() {
@@ -79,7 +85,11 @@ public class Elevator {
 		double minTransit = minTransitTime(floorPeople.get(0).getFloor());
 
 		for(int i = 0; i < floorPeople.size(); i++) {
-			waitTimes.add(arriveTime + departTime - floorPeople.get(i).getArrival() - minTransit);
+			double waitTime = arriveTime + departTime - floorPeople.get(i).getArrival() - minTransit;
+			if(waitTime < -.001){
+				System.out.println(waitTime);
+			}
+			waitTimes.add(waitTime);
 		}
 
 		return departTime;
@@ -88,12 +98,12 @@ public class Elevator {
 	private double minTransitTime(int floor) {
 		double moveTime = 0; 
 
-		if(floor - 0 > 1)
-			moveTime = 16.0 + 5.0 * ((floor-0) - 2);
+		if(floor > 1)
+			moveTime = 16.0 + 5.0 * ((double)floor - 2.0);
 		else
 			moveTime = 8.0;
 
-		return moveTime + 6;
+		return moveTime + 6.0;
 	}
 
 	public double getDepartTime(int numPeople) {

@@ -19,6 +19,7 @@ public class SIM {
 	String traceFilename;
 	int days;
 	int maxQueueLength;
+	int numPedestrians;
 	
 	Queue<Elevator> elevatorQueue;
 	ArrayList<PiecewiseLinearArrival> arrivals;
@@ -37,6 +38,7 @@ public class SIM {
 		this.traceFilename = traceFilename;
 		this.days = days;
 		maxQueueLength = 0;
+		numPedestrians = 0;
 		
 		randomTrace = new TraceHandler(traceFilename);
 		elevatorQueue = new ArrayDeque<Elevator>();
@@ -44,25 +46,29 @@ public class SIM {
 		eventQueue = new PriorityQueue<Event>(2,new EventComparator());
 		lobbyQueue = new ArrayDeque<Person>();
 		
-		
+		p = p * (this.a+this.b);
 		initElevators();
+		initArrivals();
 		//initSim();
 	}
 	
 	private void initSim() throws IOException{
-		p = p * (a+b);
-		initArrivals();
+		
+		
 		sim_time = 0;
 		for (int i = 0; i < floors; i++){
+			arrivals.get(i).reset();
 			double nextArrival = arrivals.get(i).nextTime(randomTrace.getNextVal(), sim_time);
 			Person newPerson = new Person(i+1, nextArrival);
 			eventQueue.add(new Event(EventType.PERSON, nextArrival, newPerson));
+			numPedestrians++;
 		}
 	}
 	
 	private void initArrivals(){
+		arrivals.clear();
 		for (int i = 0; i < floors; i++){
-			arrivals.add(new PiecewiseLinearArrival(b + i*p + 1, b, a, numPeople));
+			arrivals.add(new PiecewiseLinearArrival(b + i*p + 60.0, b, a, numPeople));
 		}
 	}
 	
@@ -86,16 +92,22 @@ public class SIM {
 				switch(nextEvent.getType()){
 				case PERSON :
 					int nextFloor = nextPerson.getFloor();
-					double nextArrival = arrivals.get(nextFloor-1).nextTime(randomTrace.getNextVal(), sim_time);
-					Person newPerson = new Person(nextFloor, nextArrival);
-					eventQueue.add(new Event(EventType.PERSON, nextArrival, newPerson));
+					if(!arrivals.get(nextFloor-1).ended){
+						double nextArrival = arrivals.get(nextFloor-1).nextTime(randomTrace.getNextVal(), sim_time);
 					
+						if(nextArrival != -1) {
+							Person newPerson = new Person(nextFloor, nextArrival);
+							eventQueue.add(new Event(EventType.PERSON, nextArrival, newPerson));
+							numPedestrians++;
+						}
+					}
 					if(!elevatorQueue.isEmpty()){
 						Elevator elevator = elevatorQueue.remove();
 						elevator.addPerson(nextPerson);
 						eventQueue.add(new Event(EventType.ARRIVAL, sim_time + elevator.goToNextFloor() + elevator.getDepartTime(1),elevator));
 					}else{
 						lobbyQueue.add(nextEvent.getPerson());
+						if(lobbyQueue.size() > maxQueueLength) maxQueueLength = lobbyQueue.size();
 					}
 					break;
 				case ARRIVAL:
@@ -103,7 +115,7 @@ public class SIM {
 						if(lobbyQueue.isEmpty()){
 							elevatorQueue.add(nextElevator);
 						}else{
-							while(!lobbyQueue.isEmpty() && (nextElevator.personQueue.size() < 20)){
+							while(!lobbyQueue.isEmpty() && (nextElevator.personQueue.size() < 10)){
 								nextElevator.addPerson(lobbyQueue.remove());
 							}
 							eventQueue.add(new Event(EventType.ARRIVAL, sim_time + nextElevator.goToNextFloor() + nextElevator.getDepartTime(nextElevator.personQueue.size()),nextElevator));
@@ -117,7 +129,7 @@ public class SIM {
 					eventQueue.add(new Event(EventType.ARRIVAL, sim_time + nextElevator.goToNextFloor(),nextElevator));
 					break;
 				}
-				printState();
+				//printState();
 			}
 		}
 	}
@@ -132,12 +144,21 @@ public class SIM {
 	public void computeStatistics() {
 		System.out.println("Printing out statistics");
 
+		int floornum = 1;
+		for (PiecewiseLinearArrival x : arrivals){
+			System.out.println("floor " + floornum + " total arrivals " + x.arrivals + " in triangular rate distribution"
+					+ "(" + x.data.get(1).get(0) + "," + x.data.get(2).get(0) + "," + x.data.get(3).get(0) + ")");
+			floornum++;
+		}
+		
 		System.out.println("Number of Elevators: " + elevatorQueue.size());
 		ArrayList<Elevator> allElevators = new ArrayList<Elevator>();
 
 		while(!elevatorQueue.isEmpty()) {
 			allElevators.add(elevatorQueue.remove());
 		}
+		
+		System.out.println("Number of pedestrians: " + numPedestrians);
 
 		// Begin calculating the number of stops per elevator per day
 		double stops = 0.0;
@@ -169,15 +190,15 @@ public class SIM {
 			waitTimes.addAll(allElevators.get(i).getWaitTimes());
 		}
 		Collections.sort(waitTimes);
-		Collections.reverse(waitTimes);
 		int bin = 0;
 		ArrayList<Double> histogram = new ArrayList<Double>();
+		histogram.add(0.0);
 		for(int i = 0; i < waitTimes.size(); i++) {
 			if(waitTimes.get(i) < 60*(bin+1)){
-				histogram.set(bin, histogram.get(i) + 1.0);
+				histogram.set(bin, histogram.get(bin) + 1.0);
 			} else {
 				bin++;
-				histogram.add(bin, 1.0);
+				histogram.add(1.0);
 			}
 		}
 		double sum = 0;
@@ -209,10 +230,11 @@ public class SIM {
 		int days = Integer.parseInt(args[6]);*/
 		
 		// SIM sim = new SIM(floors, elevators, g, b, a, traceFilename, days);
-		SIM sim = new SIM(2,4,0.1,15,5,"uniform-0-1-big.dat",300);
+		SIM sim = new SIM(2,4,0.1,15,5,"uniform-0-1-00.dat",300);
 		
 		sim.run();
-
+		sim.printState();
+		sim.computeStatistics();
 	}
 
 }

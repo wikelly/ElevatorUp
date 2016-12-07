@@ -6,12 +6,16 @@ public class PiecewiseLinearArrival {
 	
 	ArrayList<ArrayList<Double>> data;
 	int numPeople;
+	int arrivals;
+	boolean ended;
 
 	public PiecewiseLinearArrival(double p, double b, double a, int numPeople){
 		data = new ArrayList<ArrayList<Double>>();
 		this.numPeople = numPeople;
 		loadArrivalRates(p,b,a);
 		calculateCumulativeRates();
+		ended = false;
+		arrivals = 0;
 	}
 
 	private void loadArrivalRates(double p, double b, double a){
@@ -96,15 +100,27 @@ public class PiecewiseLinearArrival {
 	}
 	
 	public double nextTime(double nextRand, double sim_time){
+		if (ended) return -1;
 		
 		double ca = eventRateAtTime(sim_time);
 		
 		ca = ca - Math.log(nextRand);
 		
+		if (ca > numPeople){
+			ended = true;
+			//arrivals++;
+			return -1;
+		}
+		
 		double next_time = inverseRate(ca);
 		
+		arrivals++;
 		return next_time;
 
+	}
+	
+	public void reset(){
+		ended = false;
 	}
 
 }
