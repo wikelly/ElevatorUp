@@ -43,7 +43,7 @@ public class SIM {
 		
 		
 		initElevators();
-		initSim();
+		//initSim();
 	}
 	
 	private void initSim() throws IOException{
@@ -52,8 +52,8 @@ public class SIM {
 		sim_time = 0;
 		for (int i = 0; i < floors; i++){
 			double nextArrival = arrivals.get(i).nextTime(randomTrace.getNextVal(), sim_time);
-			Person newPerson = new Person(i, nextArrival);
-			eventQueue.add(new Event(EventType.ARRIVAL, nextArrival, newPerson));
+			Person newPerson = new Person(i+1, nextArrival);
+			eventQueue.add(new Event(EventType.PERSON, nextArrival, newPerson));
 		}
 	}
 	
@@ -69,12 +69,61 @@ public class SIM {
 		}
 	}
 	
-	public void run(){
-		
+	public void run() throws IOException{
+		for(int i = 0; i < days; i++){
+			initSim();
+			
+			while(!eventQueue.isEmpty()){
+				
+				Event nextEvent = eventQueue.remove();
+				sim_time = nextEvent.getTime();
+				Elevator nextElevator = nextEvent.getElevator();
+				Person nextPerson = nextEvent.getPerson();
+				
+				switch(nextEvent.getType()){
+				case PERSON :
+					int nextFloor = nextPerson.getFloor();
+					double nextArrival = arrivals.get(nextFloor-1).nextTime(randomTrace.getNextVal(), sim_time);
+					Person newPerson = new Person(nextFloor, nextArrival);
+					eventQueue.add(new Event(EventType.PERSON, nextArrival, newPerson));
+					
+					if(!elevatorQueue.isEmpty()){
+						Elevator elevator = elevatorQueue.remove();
+						elevator.addPerson(nextPerson);
+						eventQueue.add(new Event(EventType.ARRIVAL, sim_time + elevator.goToNextFloor() + elevator.getDepartTime(1),elevator));
+					}else{
+						lobbyQueue.add(nextEvent.getPerson());
+					}
+					break;
+				case ARRIVAL:
+					if(nextElevator.currentFloor == 0){
+						if(lobbyQueue.isEmpty()){
+							elevatorQueue.add(nextElevator);
+						}else{
+							while(!lobbyQueue.isEmpty() && (nextElevator.personQueue.size() < 20)){
+								nextElevator.addPerson(lobbyQueue.remove());
+							}
+							eventQueue.add(new Event(EventType.ARRIVAL, sim_time + nextElevator.goToNextFloor() + nextElevator.getDepartTime(nextElevator.personQueue.size()),nextElevator));
+						}
+
+					}else{
+						eventQueue.add(new Event(EventType.LEAVE, sim_time + nextElevator.dropOff(sim_time),nextElevator));
+					}
+					break;
+				case LEAVE: 
+					eventQueue.add(new Event(EventType.ARRIVAL, sim_time + nextElevator.goToNextFloor(),nextElevator));
+					break;
+				}
+				printState();
+			}
+		}
 	}
 	
 	public void printState(){
+		System.out.println(sim_time);
 		System.out.println(eventQueue);
+		System.out.println(elevatorQueue);
+		System.out.println(lobbyQueue);
 	}
 
 
@@ -95,8 +144,7 @@ public class SIM {
 		// SIM sim = new SIM(floors, elevators, g, b, a, traceFilename, days);
 		SIM sim = new SIM(2,4,0.1,15,5,"uniform-0-1-big.dat",300);
 		
-		
-		sim.printState();
+		sim.run();
 
 	}
 

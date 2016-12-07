@@ -1,4 +1,9 @@
 public class Person {
+	@Override
+	public String toString() {
+		return "Person [arrival=" + arrival + ", floor=" + floor + "]";
+	}
+
 	private double arrival;
 	private int floor;
 

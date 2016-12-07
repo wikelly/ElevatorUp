@@ -45,11 +45,19 @@ public class Elevator {
 		return moveTime;
 	}
 
+	@Override
+	public String toString() {
+		return "Elevator [currentFloor=" + currentFloor + ", numStops="
+				+ numStops + ", floorsTraveled=" + floorsTraveled
+				+ ", personQueue=" + personQueue + ", waitTimes=" + waitTimes
+				+ "]";
+	}
+
 	public double dropOff(double arriveTime) {
 		int numberPeople = 0;
 		ArrayList<Person> floorPeople = new ArrayList<Person>();
 
-		while(personQueue.peek().getFloor() == currentFloor) {
+		while(!personQueue.isEmpty() && (personQueue.peek().getFloor() == currentFloor)) {
 			numberPeople++;
 			floorPeople.add(personQueue.remove());
 		}
@@ -75,7 +83,7 @@ public class Elevator {
 		return moveTime + 6;
 	}
 
-	private double getDepartTime(int numPeople) {
+	public double getDepartTime(int numPeople) {
 		if(numPeople == 1)
 			return 3.0;
 		else if(numPeople == 2)

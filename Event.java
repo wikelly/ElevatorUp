@@ -30,6 +30,17 @@ public class Event {
 
 	@Override
 	public String toString() {
-	    return type.getType() + " at time " + time;
+		String personString = "";
+		String elevatorString = "";
+		if (elevator != null) elevatorString = " " + String.valueOf(elevator.currentFloor);
+	    return type.getType() + elevatorString + " at time " + time;
+	}
+
+	public Elevator getElevator() {
+		return elevator;
+	}
+
+	public Person getPerson() {
+		return person;
 	}
 }

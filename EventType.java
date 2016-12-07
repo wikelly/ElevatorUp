@@ -1,5 +1,5 @@
 public enum EventType {
-	ARRIVAL("Arrive on Base Floor"), 
+	ARRIVAL("Arrive on Floor"), 
 	LEAVE("Leaving Base Floor"), 
 	PERSON("New Person Arrival");
 
