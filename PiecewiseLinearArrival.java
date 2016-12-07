@@ -18,7 +18,7 @@ public class PiecewiseLinearArrival {
 				
 		ArrayList<Double> rateVal = new ArrayList<Double>(Arrays.asList( 0.0, 0.0 ));
 		ArrayList<Double> rateVal2 = new ArrayList<Double>(Arrays.asList( p-b, 0.0 ));
-		ArrayList<Double> rateVal3 = new ArrayList<Double>(Arrays.asList( p, (2.0/(b+a))*100.0 ));
+		ArrayList<Double> rateVal3 = new ArrayList<Double>(Arrays.asList( p, (2.0/(b+a))*(double)numPeople ));
 		ArrayList<Double> rateVal4 = new ArrayList<Double>(Arrays.asList(p+a,0.0));
 		
 		

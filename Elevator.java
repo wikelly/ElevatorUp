@@ -2,26 +2,22 @@
 // Number of people
 // List of floors to go to
 
-//Events
-// Elevator arrival on base floors
-// Elevator arrival on other floors
-// People arrival
-import java.util.TreeMap;
+import java.util.PriorityQueue;
 
 public class Elevator {
-	SortedMap<int,int> floorPeople;
-	int currentFloor, numStops;
+	int currentFloor, numStops, floorsTraveled;
+	
+	PriorityQueue<Person> personQueue;
 	
 	public Elevator() {
-		floorPeople = new TreeMap();
 		currentFloor = 0;
 		numStops = 0;
+		floorsTraveled = 0;
+		
+		personQueue = new PriorityQueue<Person>(2, new PersonComparator());
 	}
 
-	public void addPerson(int floor) {
-		if(floorPeople.containsKey(floor))
-			floorPeople.get(floor) += 1;
-		else
-			floorPeople.put(floor, 1);
+	public void addPerson(Person thisGuy) {
+		personQueue.add(thisGuy);
 	}
 }
