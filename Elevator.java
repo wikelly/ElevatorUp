@@ -45,6 +45,18 @@ public class Elevator {
 		return moveTime;
 	}
 
+	public int getStops() {
+		return numStops;
+	}
+
+	public int getFloors() {
+		return floorsTraveled;
+	}
+
+	public ArrayList<Double> getWaitTimes() {
+		return waitTimes;
+	}
+
 	public double dropOff(double arriveTime) {
 		int numberPeople = 0;
 		ArrayList<Person> floorPeople = new ArrayList<Person>();
