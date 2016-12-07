@@ -9,7 +9,7 @@ public class Elevator {
 	int currentFloor, numStops, floorsTraveled;
 	
 	PriorityQueue<Person> personQueue;
-	ArrayList<double> waitTimes;
+	ArrayList<Double> waitTimes;
 	
 	public Elevator() {
 		currentFloor = 0;
@@ -17,7 +17,7 @@ public class Elevator {
 		floorsTraveled = 0;
 		
 		personQueue = new PriorityQueue<Person>(2, new PersonComparator());
-		waitTimes = new ArrayList<double>();
+		waitTimes = new ArrayList<Double>();
 	}
 
 	public void addPerson(Person thisGuy) {
@@ -55,10 +55,10 @@ public class Elevator {
 		}
 
 		double departTime = getDepartTime(numberPeople);
-		double minTransit = minTransitTime(floorPeople[0].getFloor())
+		double minTransit = minTransitTime(floorPeople.get(0).getFloor());
 
 		for(int i = 0; i < floorPeople.size(); i++) {
-			waitTimes.add(arriveTime + departTime - floorPeople[i].getArrival() - minTransit);
+			waitTimes.add(arriveTime + departTime - floorPeople.get(i).getArrival() - minTransit);
 		}
 
 		return departTime;
@@ -77,25 +77,25 @@ public class Elevator {
 
 	private double getDepartTime(int numPeople) {
 		if(numPeople == 1)
-			return = 3.0;
+			return 3.0;
 		else if(numPeople == 2)
-			return = 5.0;
+			return 5.0;
 		else if(numPeople == 3)
-			return = 7.0;
+			return 7.0;
 		else if(numPeople == 4)
-			return = 9.0;
+			return 9.0;
 		else if(numPeople == 5)
-			return = 11.0;
+			return 11.0;
 		else if(numPeople == 6)
-			return = 13.0;
+			return 13.0;
 		else if(numPeople == 7)
-			return = 15.0;
+			return 15.0;
 		else if(numPeople == 8)
-			return = 17.0;
+			return 17.0;
 		else if(numPeople == 9)
-			return = 19.0;
+			return 19.0;
 		else if(numPeople == 10)
-			return = 22.0;
-		return = -1.0;
+			return 22.0;
+		return -1.0;
 	}
 }
