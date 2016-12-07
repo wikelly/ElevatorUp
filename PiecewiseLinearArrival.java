@@ -53,6 +53,7 @@ public class PiecewiseLinearArrival {
 		
 		double lambdaDiff = data.get(index+1).get(1) - lambda_j;
 		double timeDiff = data.get(index+1).get(0) - time_j;
+		
 		return lambdaDiff / timeDiff;
 		
 		
