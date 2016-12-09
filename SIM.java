@@ -46,15 +46,21 @@ public class SIM {
 		eventQueue = new PriorityQueue<Event>(2,new EventComparator());
 		lobbyQueue = new ArrayDeque<Person>();
 
-		// System.out.println("Finished vars");
+		System.out.println("Finished vars");
 		
 		p = p * (this.a+this.b);
 		initElevators();
 		initArrivals();
 		//initSim();
+
+		System.out.println("Initialize complete");
 	}
+
+	// int counter = 0;
 	
 	private void initSim() throws IOException{
+		// System.out.println("Initializing for day " + counter);
+		// counter++;
 		sim_time = 0;
 		for (int i = 0; i < floors; i++){
 			arrivals.get(i).reset();
