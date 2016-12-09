@@ -173,7 +173,7 @@ public class SIM {
 		}
 		stops = stops / (double)(elevators) / (double)(days);
 		System.out.println("Number of stops per elevator per day: " + stops);
-		System.out.println("OUTPUT " + stops);
+		System.out.format("OUTPUT %.5f\n", stops);
 
 
 		// Begin calculating number of traveled floors per elevator per day
@@ -183,7 +183,7 @@ public class SIM {
 		}
 		floors = floors / (double)(elevators) / (double)(days);
 		System.out.println("Number of floors traveled per elevator per day: " + floors);
-		System.out.println("OUTPUT " + floors);
+		System.out.format("OUTPUT %.5f\n", floors);
 
 
 		// Print out the longest that the queue of people ever was
