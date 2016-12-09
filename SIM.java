@@ -211,8 +211,9 @@ public class SIM {
 		System.out.println("Printing out the histogram");
 		System.out.print("OUTPUT ");
 		for(int i = 0; i < histogram.size(); i++) {
-			System.out.print(histogram.get(i) + " ");
+			System.out.format("%.5f ",histogram.get(i));
 		}
+		System.out.println("");
 	}
 
 	/**
@@ -221,16 +222,16 @@ public class SIM {
 	 */
 	public static void main(String[] args) throws IOException {
 		
-		/*int floors = Integer.parseInt(args[0]);
+		int floors = Integer.parseInt(args[0]);
 		int elevators = Integer.parseInt(args[1]);
 		double g = Double.parseDouble(args[2]);
 		double b = Double.parseDouble(args[3]);
 		double a = Double.parseDouble(args[4]);
 		String traceFilename = args[5];
-		int days = Integer.parseInt(args[6]);*/
+		int days = Integer.parseInt(args[6]);
 		
-		// SIM sim = new SIM(floors, elevators, g, b, a, traceFilename, days);
-		SIM sim = new SIM(2,4,0.1,15,5,"uniform-0-1-00.dat",300);
+		SIM sim = new SIM(floors, elevators, g, b, a, traceFilename, days);
+		// SIM sim = new SIM(2,4,0.1,15,5,"uniform-0-1-00.dat",300);
 		
 		sim.run();
 		sim.printState();
