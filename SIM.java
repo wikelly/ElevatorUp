@@ -45,6 +45,8 @@ public class SIM {
 		arrivals = new ArrayList<PiecewiseLinearArrival>();
 		eventQueue = new PriorityQueue<Event>(2,new EventComparator());
 		lobbyQueue = new ArrayDeque<Person>();
+
+		// System.out.println("Finished vars");
 		
 		p = p * (this.a+this.b);
 		initElevators();
@@ -53,8 +55,6 @@ public class SIM {
 	}
 	
 	private void initSim() throws IOException{
-		
-		
 		sim_time = 0;
 		for (int i = 0; i < floors; i++){
 			arrivals.get(i).reset();
